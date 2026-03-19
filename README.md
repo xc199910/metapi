@@ -1,3 +1,13 @@
+---
+title: Metapi
+emoji: 🐳
+colorFrom: blue
+colorTo: green
+sdk: docker
+app_port: 7860
+---
+
+
 <div align="center">
 
 <img src="docs/logos/logo-full.png" alt="Metapi" width="280">
