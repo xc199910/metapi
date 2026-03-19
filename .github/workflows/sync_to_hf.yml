@@ -2,7 +2,6 @@ name: Sync to Hugging Face hub
 on:
   push:
     branches: [main]
-  # 允许手动触发
   workflow_dispatch:
 
 jobs:
@@ -12,10 +11,23 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          lfs: true
+          lfs: true # 这一步很关键
+
+      - name: Install Git LFS
+        run: git lfs install
+
       - name: Push to hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          # 替换为你的 HF 用户名和 Space 名称
+          # 1. 追踪所有的 png 文件为 LFS (如果还没追踪的话)
+          git lfs track "*.png"
+          git add .gitattributes
+          
+          # 2. 配置用户信息
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          
+          # 3. 强制推送（包含 LFS 对象）
+          # 请确保将 wotmlaila 和 metapi 替换为你的实际信息
           git push -f https://wotmlaila:$HF_TOKEN@huggingface.co/spaces/wotmlaila/metapi main
