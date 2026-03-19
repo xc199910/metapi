@@ -20,14 +20,18 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          # 1. 追踪所有的 png 文件为 LFS (如果还没追踪的话)
-          git lfs track "*.png"
-          git add .gitattributes
+          # 1. 彻底清空本地 Git 状态，只保留当前文件内容
+          rm -rf .git
+          git init
           
-          # 2. 配置用户信息
+          # 2. 配置身份
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          
-          # 3. 强制推送（包含 LFS 对象）
-          # 请确保将 wotmlaila 和 metapi 替换为你的实际信息
-          git push -f https://wotmlaila:$HF_TOKEN@huggingface.co/spaces/wotmlaila/metapi main
+
+          # 3. 重新添加所有文件（此时图片已经被你删了，所以很干净）
+          git add .
+          git commit -m "Pure deploy without binary history"
+
+          # 4. 强制覆盖 Hugging Face 的仓库
+          # 请确保用户名 wotmlaila 和项目名 metapi 正确
+          git push -f https://wotmlaila:$HF_TOKEN@huggingface.co/spaces/wotmlaila/metapi HEAD:main
